@@ -43,5 +43,12 @@ public class GlobalAdvice implements ResponseBodyAdvice {
     }
     return body;
   }
-  
+
+  @ExceptionHandler(value = Exception.class)
+  public ModelAndView defaultErrorHandler(HttpServletRequest req, Exception e) throws Exception {
+    if (AnnotationUtils.findAnnotation(e.getClass(), ResponseStatus.class) != null) {
+      throw e;
+    }
+    return new ModelAndView("error.html");
+  }
 }
