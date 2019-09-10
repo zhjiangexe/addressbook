@@ -3,11 +3,98 @@
 <head>
     <meta charset="UTF-8">
     <title>addressbook</title>
+    <style type="text/css">
+        body {
+            font-size: 18px;
+        }
+    </style>
 </head>
 <body>
-    <h1>Ready!!</h1>
-    <p>You can request <br/>
-        <a href="http://localhost:8080/customers?surname=potter">http://localhost:8080/customers?surname=potter</a>
-    </p>
+<h1>Ready!!</h1>
+<p>You can request</p>
+<pre>
+## API TEST CASE
+- server/customers?surname=
+- server/customers?surname=qoo
+- server/customers?surname=Potter
+- server/customers?surname=POTTER
+- server/customers?surname=potter
+- server/customers?surname=po
+- server/customers?surname=er
+- server/customers?surname=ot
+</pre>
+<input type="text" id="searchInput" placeholder="surname"/>
+<button id="search">search</button>
+<div>
+    <table id="table" style="width: 480px; border: solid 1px black;">
+        <thead>
+        <tr>
+            <th>firstname</th>
+            <th>surname</th>
+            <th>address</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td colspan="3">no information</td>
+        </tr>
+        </tbody>
+    </table>
+    <p></p>
+    <div id="jsonDisplay" style="font-size: 18px; width: 480px;"></div>
+</div>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script>
+    var mySpace = {
+        createTd: function (column) {
+            var td = document.createElement('td');
+            var text = document.createTextNode(column);
+            td.appendChild(text);
+            return td;
+        },
+        noinformationTbody: function () {
+            var newTbody = document.createElement("tbody");
+            var tr = document.createElement('tr');
+            var td = document.createElement('td');
+            td.setAttribute("colspan", 3);
+            td.appendChild(document.createTextNode('no information'));
+            tr.appendChild(td);
+            newTbody.appendChild(tr);
+            return newTbody;
+        }
+    }
+
+    document.getElementById("search").addEventListener("click", function () {
+        var surname = document.getElementById("searchInput").value;
+        var table = document.getElementById("table");
+        var oldTbody = table.getElementsByTagName('tbody')[0];
+        axios.get('/customers?surname=' + surname)
+            .then(function (response) {
+                document.getElementById("jsonDisplay").innerText = JSON.stringify(response.data);
+                var data = response.data.data;
+                if (data.length === 0) {
+                    table.replaceChild(mySpace.noinformationTbody(), oldTbody);
+                    return;
+                }
+                var newTbody = document.createElement("tbody");
+                for (let i = 0; i < data.length; i++) {
+                    var customer = data[i];
+                    var tr = document.createElement('tr');
+                    tr.appendChild(mySpace.createTd(customer.surname));
+                    tr.appendChild(mySpace.createTd(customer.firstname));
+                    tr.appendChild(mySpace.createTd(customer.address));
+                    newTbody.appendChild(tr);
+                }
+                table.replaceChild(newTbody, oldTbody);
+                console.log(response);
+            })
+            .catch(function (error) {
+                document.getElementById("jsonDisplay").innerText = JSON.stringify(error.response.data);
+                var newTbody = mySpace.noinformationTbody();
+                table.replaceChild(newTbody, oldTbody)
+                console.log(error, error.response);
+            });
+    });
+</script>
 </body>
 </html>
