@@ -28,6 +28,16 @@
 2. Generate docker image: `docker build . -t addressbook`
 3. Up container `docker run -p 8080:8080 addressbook`
 
+## Explanation
+
+please follow below classes, go through top to down, there are only method named fuzzySearchBySurname
+
+- com.jiang.addressbook.web.controller.CustomerController
+- com.jiang.addressbook.service.CustomerService
+- com.jiang.addressbook.dao.CustomerDao
+
+you also can see their unit test in folder `test/java`
+
 
 ## API TEST CASE
 - server/customers?surname=

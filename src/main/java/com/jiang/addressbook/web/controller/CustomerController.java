@@ -19,8 +19,13 @@ import java.util.List;
 public class CustomerController {
   private final CustomerService customerService;
 
+  /**
+   * fuzzy search customers surname
+   * @param surname
+   * @return customers
+   */
   @GetMapping("")
-  public List<Customer> query(@NotBlank @RequestParam String surname) {
+  public List<Customer> fuzzySearchBySurname(@NotBlank @RequestParam String surname) {
     return customerService.fuzzySearchBySurname(surname);
   }
 }
